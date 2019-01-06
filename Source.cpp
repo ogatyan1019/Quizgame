@@ -10,7 +10,8 @@ int QNO;	//今回の問題数
 int get_data(void)	//前回の記録を読み取る
 {
 	FILE *fpr;
-	int best;
+	int best,level;
+	char line[256];
 	fpr = fopen("SCORE.txt", "r");
 	if (fpr == NULL)
 	{
@@ -19,124 +20,138 @@ int get_data(void)	//前回の記録を読み取る
 	}
 	else
 	{
-		int year, month, day, hour, minute, second;
-		fscanf(fpr, "%d%d%d%d%d%d", &year, &month, &day ,&hour, &minute, &second);
+		int year, month, day, h, m, s;
+		fscanf(fpr, "%d%d%d%d%d%d", &year, &month, &day, &h, &m, &s);
 		fscanf(fpr, "%d%d", &best, &qNO);
-
-		printf("前回の最高得点は\n%04d年%02d月%02d日%02d時%02d分%02d秒の\n", year, month, day, hour, minute, second);
-		printf("%d問中%d問でした。", qNO, best);
-
+		fscanf(fpr, "%d", &level);
+		
+		printf("前回の終了は%04d年%02d月%02d日%02d時%02d分%02d秒でした。\n", year, month, day, h, m, s);
+		printf("最高得点は%d問中%d問でした。", qNO, best);
+		printf("難易度%dを選択しました。",level);
+		
 		fclose(fpr);
+
 	}
 
 	return (best);
 }
 
-void put_data(int best)	//今回の時間更新
+void put_data(int best,int level)	//今回の更新
 {
 	FILE *fps;
 	time_t t = time(NULL);
 	struct tm *local = localtime(&t);
 
-	fps = fopen("SCOR.txt", "w");
-
-	fprintf(fps,"%d%d%d%d%d%d\n",local-> tm_year + 1900, local->tm_mon + 1,
-				local->tm_mday, local->tm_hour, local->tm_min, local->tm_sec);
-	fprintf(fps, "%d %d\n", best, QNO);
+	fps = fopen("SCORE.txt", "w");
+	if ((fps = fopen("SCORE.txt", "w")) == NULL) {
+		printf("ERROR\n");
+		exit(-1);
+	}
+	
+	fprintf(fps, "%d %d %d %d %d %d\n", local->tm_year + 1900, local->tm_mon + 1, local->tm_mday, local->tm_hour, local->tm_min, local->tm_sec);
+	fprintf(fps, "%d%d\n", best, QNO);
+	fprintf(fps, "%d\n", level);
 
 	fclose(fps);
 }
 
-int game(void)	//文章表示とスコア計算
+int level(void)
 {
-	int count = 0, Linecount = 1,score=0;
-	int answer, CorrectAns,level,i;
-	FILE *fp;
-	char str[256];
-
+	int level, i;
 	printf("難易度を選択してください。\n1.準2級　2.2級　3.準1級\n");
 	scanf("%d", &level);
 	if ((level != 1) && (level != 2) && (level != 3))
 	{
 		for (i = 1; i <= 10; i++)
 		{
-			printf("正しい難易度を選択してください。\n準2級　2.2級　3.準1級");
+			printf("正しい難易度を選択してください。\n準2級　2.2級　3.準1級\n\n");
 			scanf("%d", &level);
 			if ((level == 1) || (level == 2) || (level == 3))
 				break;
-			
+
 		}
 		if (i = 10)
 		{
-			printf("難易度が選択されませんでした。");
+			printf("難易度が選択されませんでした。\n");
 			exit(-1);
 		}
 
 	}
-	printf("これから問題が表示されます。\n選択肢の先頭の数字を入力して下さい。\n\n");
-	printf("Start!!\n");
 
-	if (level == 1)
+	return (level);
+}
+
+int game(void)	//文章表示とスコア計算
+{
+	int count = 1,score=0;
+	int answer, CorrectAns;
+	FILE *fp;
+	char str[256];
+
+	if (level() == 1)
 	{
-		fp = fopen("Quasi_Grade2", "r");
+		fp = fopen("Quasi_Grade2.txt", "r");
 		if (fp==NULL)
-		{
+		{			
+			exit (-1);
+		}
+	}
+
+	else if (level() == 2)
+	{
+		fp = fopen("Grade2.txt", "r");
+		if (fp == NULL)
+		{			
 			exit(-1);
 		}
 	}
 
-	else if (level == 2)
+	else if (level() == 3)
 	{
-		fp = fopen("Grade2", "r");
+		fp = fopen("Quasi_Grade1.txt", "r");
 		if (fp == NULL)
-		{
-			exit(-1);
-		}
-	}
-
-	else if (level == 3)
-	{
-		fp = fopen("Quasi_Grade1", "r");
-		if (fp == NULL)
-		{
-			exit(-1);
+		{		
+			exit (-1);
 		}
 	}
 
 	else
 	{
-		printf("ERROR\nFile Not Open");
-		exit(-1);
+		printf("ERROR\nFile Not Open\n");
+		exit (-1);
 	}
 
-	while (fgets(str, 256, fp) != NULL)
+	printf("これから問題が表示されます。\n選択肢の先頭の数字を入力して下さい。\n\n");
+	printf("Start!!\n");
+
+	while (fgets(str, 256 , fp) != NULL)
 	{
 
+		if ((count%3 == 1)||(count%3 == 2))
+		{
+			printf("%s\n", str);
+		}
+		
+		
 		if (count % 3 == 0)
 		{
 			CorrectAns = atoi(str);
 			scanf("%d", &answer);
 			if (CorrectAns == answer)
 			{
-				printf("正解！！\n");
-				count++;
+				printf("正解！！\n\n");
 				score++;
 				QNO++;
 			}
 			else
 			{
-				printf("残念！！");
-				printf("%s", str);
+				printf("残念！！\n\n");
 				QNO++;
 			}
 		}
 
-		else
-		{
-			printf("%s\n", str);
-		}
-
 		count++;
+		
 	}
 	fclose(fp);
 	return(score);
@@ -153,9 +168,10 @@ int main(void)
 {
 	int score;
 	int best;
+	int level;
 
 	best = get_data();
-
+	level = game();
 	score = game();
 	result(best, score);
 
@@ -164,7 +180,8 @@ int main(void)
 		best = score;
 	}
 
-	put_data(best);
+	put_data(best,level);
+	
 
 	return (0);
 }
