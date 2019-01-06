@@ -9,10 +9,10 @@ int QNO;	//今回の問題数
 
 int get_data(void)	//前回の記録を読み取る
 {
-	FILE *fp;
+	FILE *fpr;
 	int best;
-
-	if ((fp = fopen("SCORE.txt", "r")) == NULL)
+	fpr = fopen("SCORE.txt", "r");
+	if (fpr == NULL)
 	{
 		printf("初回なのでスコアファイルを新規作成します。\n");
 		best = 0;
@@ -20,13 +20,13 @@ int get_data(void)	//前回の記録を読み取る
 	else
 	{
 		int year, month, day, hour, minute, second;
-		fscanf(fp, "%d%d%d%d%d%d", &year, &month, &day ,&hour, &minute, &second);
-		fscanf(fp, "%d%d", &best, &qNO);
+		fscanf(fpr, "%d%d%d%d%d%d", &year, &month, &day ,&hour, &minute, &second);
+		fscanf(fpr, "%d%d", &best, &qNO);
 
 		printf("前回の最高得点は\n%04d年%02d月%02d日%02d時%02d分%02d秒の\n", year, month, day, hour, minute, second);
 		printf("%d問中%d問でした。", qNO, best);
 
-		fclose(fp);
+		fclose(fpr);
 	}
 
 	return (best);
@@ -34,17 +34,17 @@ int get_data(void)	//前回の記録を読み取る
 
 void put_data(int best)	//今回の時間更新
 {
-	FILE *fp;
+	FILE *fps;
 	time_t t = time(NULL);
 	struct tm *local = localtime(&t);
 
-	fp = fopen("SCOR.txt", "w");
+	fps = fopen("SCOR.txt", "w");
 
-	fprintf(fp,"%d%d%d%d%d%d\n",local-> tm_year + 1900, local->tm_mon + 1,
+	fprintf(fps,"%d%d%d%d%d%d\n",local-> tm_year + 1900, local->tm_mon + 1,
 				local->tm_mday, local->tm_hour, local->tm_min, local->tm_sec);
-	fprintf(fp, "%d %d\n", best, QNO);
+	fprintf(fps, "%d %d\n", best, QNO);
 
-	fclose(fp);
+	fclose(fps);
 }
 
 int game(void)	//文章表示とスコア計算
@@ -64,11 +64,12 @@ int game(void)	//文章表示とスコア計算
 			scanf("%d", &level);
 			if ((level == 1) || (level == 2) || (level == 3))
 				break;
-			if (i = 10)
-			{
-				printf("難易度が選択されませんでした。");
-				exit (-1);
-			}
+			
+		}
+		if (i = 10)
+		{
+			printf("難易度が選択されませんでした。");
+			exit(-1);
 		}
 
 	}
@@ -78,16 +79,28 @@ int game(void)	//文章表示とスコア計算
 	if (level == 1)
 	{
 		fp = fopen("Quasi_Grade2", "r");
+		if (fp==NULL)
+		{
+			exit(-1);
+		}
 	}
 
 	else if (level == 2)
 	{
 		fp = fopen("Grade2", "r");
+		if (fp == NULL)
+		{
+			exit(-1);
+		}
 	}
 
 	else if (level == 3)
 	{
 		fp = fopen("Quasi_Grade1", "r");
+		if (fp == NULL)
+		{
+			exit(-1);
+		}
 	}
 
 	else
