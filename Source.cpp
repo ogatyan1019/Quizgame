@@ -26,8 +26,7 @@ int get_data(void)	//前回の記録を読み取る
 		fscanf(fpr, "%d", &level);
 
 		printf("前回の終了は%04d年%02d月%02d日%02d時%02d分%02d秒でした。\n", year, month, day, h, m, s);
-		printf("最高得点は%d問中%d問でした。", qNO, best);
-		printf("難易度%dを選択しました。", level);
+		printf("最高得点は%d問中%d問でした。\n", qNO, best);
 
 		fclose(fpr);
 
@@ -36,7 +35,7 @@ int get_data(void)	//前回の記録を読み取る
 	return (best);
 }
 
-void put_data(int best, int level)	//今回の更新
+void put_data(int best, int QNO)	//今回の更新
 {
 	FILE *fps;
 	time_t t = time(NULL);
@@ -49,24 +48,26 @@ void put_data(int best, int level)	//今回の更新
 	}
 
 	fprintf(fps, "%d %d %d %d %d %d\n", local->tm_year + 1900, local->tm_mon + 1, local->tm_mday, local->tm_hour, local->tm_min, local->tm_sec);
-	fprintf(fps, "%d%d\n", best, QNO);
-	fprintf(fps, "%d\n", level);
+	fprintf(fps, "%d %d\n", best, QNO);
 
 	fclose(fps);
 }
 
+
+
+
 int difficult(void)
 {
-	int difficult, i;
+	int level, i;
 	printf("難易度を選択してください。\n1.準2級　2.2級　3.準1級\n");
-	scanf("%d", &difficult);
-	if (( difficult != 1) && (difficult != 2) && (difficult != 3))
+	scanf("%d", &level);
+	if ((level != 1) && (level != 2) && (level != 3))
 	{
 		for (i = 1; i <= 10; i++)
 		{
 			printf("正しい難易度を選択してください。\n準2級　2.2級　3.準1級\n\n");
-			scanf("%d", &difficult);
-			if ((difficult == 1) || (difficult == 2) || (difficult == 3))
+			scanf("%d", &level);
+			if ((level == 1) || (level == 2) || (level == 3))
 				break;
 
 		}
@@ -77,8 +78,8 @@ int difficult(void)
 		}
 
 	}
-	
-	return (difficult);
+
+	return (level);
 }
 
 int game(void)	//文章表示とスコア計算
@@ -154,6 +155,7 @@ int game(void)	//文章表示とスコア計算
 
 	}
 	fclose(fp);
+
 	return(score);
 
 }
@@ -171,7 +173,7 @@ int main(void)
 	int level;
 
 	best = get_data();
-	level = difficult();
+
 	score = game();
 	result(best, score);
 
@@ -180,9 +182,8 @@ int main(void)
 		best = score;
 	}
 
-	put_data(best,level);
+	put_data(best, QNO);
 
 
 	return (0);
 }
-
