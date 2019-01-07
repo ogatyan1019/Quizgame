@@ -10,7 +10,7 @@ int QNO;	//今回の問題数
 int get_data(void)	//前回の記録を読み取る
 {
 	FILE *fpr;
-	int best,level;
+	int best, level;
 	char line[256];
 	fpr = fopen("SCORE.txt", "r");
 	if (fpr == NULL)
@@ -24,11 +24,11 @@ int get_data(void)	//前回の記録を読み取る
 		fscanf(fpr, "%d%d%d%d%d%d", &year, &month, &day, &h, &m, &s);
 		fscanf(fpr, "%d%d", &best, &qNO);
 		fscanf(fpr, "%d", &level);
-		
+
 		printf("前回の終了は%04d年%02d月%02d日%02d時%02d分%02d秒でした。\n", year, month, day, h, m, s);
 		printf("最高得点は%d問中%d問でした。", qNO, best);
-		printf("難易度%dを選択しました。",level);
-		
+		printf("難易度%dを選択しました。", level);
+
 		fclose(fpr);
 
 	}
@@ -36,7 +36,7 @@ int get_data(void)	//前回の記録を読み取る
 	return (best);
 }
 
-void put_data(int best,int level)	//今回の更新
+void put_data(int best, int level)	//今回の更新
 {
 	FILE *fps;
 	time_t t = time(NULL);
@@ -47,7 +47,7 @@ void put_data(int best,int level)	//今回の更新
 		printf("ERROR\n");
 		exit(-1);
 	}
-	
+
 	fprintf(fps, "%d %d %d %d %d %d\n", local->tm_year + 1900, local->tm_mon + 1, local->tm_mday, local->tm_hour, local->tm_min, local->tm_sec);
 	fprintf(fps, "%d%d\n", best, QNO);
 	fprintf(fps, "%d\n", level);
@@ -55,18 +55,18 @@ void put_data(int best,int level)	//今回の更新
 	fclose(fps);
 }
 
-int level(void)
+int difficult(void)
 {
-	int level, i;
+	int difficult, i;
 	printf("難易度を選択してください。\n1.準2級　2.2級　3.準1級\n");
-	scanf("%d", &level);
-	if ((level != 1) && (level != 2) && (level != 3))
+	scanf("%d", &difficult);
+	if (( difficult != 1) && (difficult != 2) && (difficult != 3))
 	{
 		for (i = 1; i <= 10; i++)
 		{
 			printf("正しい難易度を選択してください。\n準2級　2.2級　3.準1級\n\n");
-			scanf("%d", &level);
-			if ((level == 1) || (level == 2) || (level == 3))
+			scanf("%d", &difficult);
+			if ((difficult == 1) || (difficult == 2) || (difficult == 3))
 				break;
 
 		}
@@ -77,62 +77,62 @@ int level(void)
 		}
 
 	}
-
-	return (level);
+	
+	return (difficult);
 }
 
 int game(void)	//文章表示とスコア計算
 {
-	int count = 1,score=0;
+	int count = 1, score = 0;
 	int answer, CorrectAns;
 	FILE *fp;
 	char str[256];
 
-	if (level() == 1)
+	if (difficult() == 1)
 	{
 		fp = fopen("Quasi_Grade2.txt", "r");
-		if (fp==NULL)
-		{			
-			exit (-1);
-		}
-	}
-
-	else if (level() == 2)
-	{
-		fp = fopen("Grade2.txt", "r");
 		if (fp == NULL)
-		{			
+		{
 			exit(-1);
 		}
 	}
 
-	else if (level() == 3)
+	else if (difficult() == 2)
+	{
+		fp = fopen("Grade2.txt", "r");
+		if (fp == NULL)
+		{
+			exit(-1);
+		}
+	}
+
+	else if (difficult() == 3)
 	{
 		fp = fopen("Quasi_Grade1.txt", "r");
 		if (fp == NULL)
-		{		
-			exit (-1);
+		{
+			exit(-1);
 		}
 	}
 
 	else
 	{
 		printf("ERROR\nFile Not Open\n");
-		exit (-1);
+		exit(-1);
 	}
 
 	printf("これから問題が表示されます。\n選択肢の先頭の数字を入力して下さい。\n\n");
 	printf("Start!!\n");
 
-	while (fgets(str, 256 , fp) != NULL)
+	while (fgets(str, 256, fp) != NULL)
 	{
 
-		if ((count%3 == 1)||(count%3 == 2))
+		if ((count % 3 == 1) || (count % 3 == 2))
 		{
 			printf("%s\n", str);
 		}
-		
-		
+
+
 		if (count % 3 == 0)
 		{
 			CorrectAns = atoi(str);
@@ -151,7 +151,7 @@ int game(void)	//文章表示とスコア計算
 		}
 
 		count++;
-		
+
 	}
 	fclose(fp);
 	return(score);
@@ -171,7 +171,7 @@ int main(void)
 	int level;
 
 	best = get_data();
-	level = game();
+	level = difficult();
 	score = game();
 	result(best, score);
 
@@ -181,7 +181,8 @@ int main(void)
 	}
 
 	put_data(best,level);
-	
+
 
 	return (0);
 }
+
