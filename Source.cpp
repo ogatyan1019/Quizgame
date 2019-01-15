@@ -1,8 +1,8 @@
 #define _CRT_SECURE_NO_WARNINGS
-#include<stdio.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include<time.h>
+#include <time.h>
 int qNO;	//前回の問題数
 int QNO;	//今回の問題数
 
@@ -146,7 +146,7 @@ int game(void)	//文章表示とスコア計算
 			}
 			else
 			{
-				printf("残念！！\n\n");
+				printf("残念！！\n正解は%dです。\n\n",CorrectAns);
 				QNO++;
 			}
 		}
