@@ -11,7 +11,7 @@ int get_data(void)	//前回の記録を読み取る
 {
 	FILE *fpr;
 	int best, level;
-	char line[256];
+
 	fpr = fopen("SCORE.txt", "r");
 	if (fpr == NULL)
 	{
@@ -25,7 +25,7 @@ int get_data(void)	//前回の記録を読み取る
 		fscanf(fpr, "%d%d", &best, &qNO);
 		fscanf(fpr, "%d", &level);
 
-		printf("前回の終了は%04d年%02d月%02d日%02d時%02d分%02d秒でした。\n", year, month, day, h, m, s);
+		printf("前回、最高得点を記録したのは%04d年%02d月%02d日%02d時%02d分%02d秒でした。\n", year, month, day, h, m, s);
 		printf("最高得点は%d問中%d問でした。\n", qNO, best);
 
 		fclose(fpr);
@@ -41,7 +41,6 @@ void put_data(int best, int QNO)	//今回の更新
 	time_t t = time(NULL);
 	struct tm *local = localtime(&t);
 
-	fps = fopen("SCORE.txt", "w");
 	if ((fps = fopen("SCORE.txt", "w")) == NULL) {
 		printf("ERROR\n");
 		exit(-1);
@@ -146,7 +145,7 @@ int game(void)	//文章表示とスコア計算
 			}
 			else
 			{
-				printf("残念！！\n正解は%dです。\n\n",CorrectAns);
+				printf("残念！！\n正解は%dです。\n\n", CorrectAns);
 				QNO++;
 			}
 		}
@@ -170,7 +169,6 @@ int main(void)
 {
 	int score;
 	int best;
-	int level;
 
 	best = get_data();
 
